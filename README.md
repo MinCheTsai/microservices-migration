@@ -1,8 +1,12 @@
 ### Directory
 `src` API Server, Using NodeJs/Express, provide User/Product/Order service sample API.
+
 `k8s` Kubernetes configuration files, includes API server / Kafka / Secret protecton
+
 `terraform_aws` Deploy EKS / RDS / SSM services on AWS
+
 `terraform_gcp` Deploy GKE / CloudSQL / Secret Manager services on GCP
+
 `drone` Setup Drone config by AWS or GCP
 
 ### Basic Infrastructure
