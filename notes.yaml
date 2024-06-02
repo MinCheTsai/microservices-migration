@@ -1,0 +1,13 @@
+terraform init
+terraform apply
+terraform output
+
+kubectl create namespace kafka
+kubectl apply -f api-deployment.yaml
+kubectl apply -f api-service.yaml
+kubectl apply -f kafka-deployment.yaml
+kubectl apply -f kafka-service.yaml
+
+EKS -> GKE
+RDS -> Cloud SQL
+SSM -> Secret Manager 

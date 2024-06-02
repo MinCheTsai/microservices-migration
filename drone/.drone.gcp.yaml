@@ -1,0 +1,46 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+  - name: clone
+    image: alpine/git
+    commands:
+      - git clone https://github.com/MinCheTsai/microservices-migration.git .
+
+  - name: terraform-init
+    image: hashicorp/terraform:light
+    environment:
+      GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS
+    commands:
+      - echo "$GOOGLE_CREDENTIALS" > /root/gcloud-service-key.json
+      - export GOOGLE_APPLICATION_CREDENTIALS=/root/gcloud-service-key.json
+      - cd terraform_gcp
+      - terraform init
+
+  - name: plan-terraform
+    image: hashicorp/terraform:light
+    environment:
+      GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS
+    commands:
+      - echo "$GOOGLE_CREDENTIALS" > /root/gcloud-service-key.json
+      - export GOOGLE_APPLICATION_CREDENTIALS=/root/gcloud-service-key.json
+      - cd terraform
+      - terraform plan -out=tfplan
+
+  - name: apply-terraform
+    image: hashicorp/terraform:light
+    environment:
+      GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS
+    commands:
+      - echo "$GOOGLE_CREDENTIALS" > /root/gcloud-service-key.json
+      - export GOOGLE_APPLICATION_CREDENTIALS=/root/gcloud-service-key.json
+      - cd terraform
+      - terraform apply tfplan
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
+    - develop

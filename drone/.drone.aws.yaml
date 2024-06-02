@@ -1,0 +1,44 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+  - name: clone
+    image: alpine/git
+    commands:
+      - git clone https://github.com/MinCheTsai/microservices-migration.git .
+
+  - name: terraform-init
+    image: hashicorp/terraform:light
+    commands:
+      - cd terraform_aws
+      - terraform init
+
+  - name: terraform-apply
+    image: hashicorp/terraform:light
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: aws_access_key_id
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: aws_secret_access_key
+    commands:
+      - cd terraform
+      - terraform apply -auto-approve
+
+  - name: kubectl-deploy
+    image: lachlanevenson/k8s-kubectl:latest
+    environment:
+      KUBECONFIG:
+        from_secret: kubeconfig
+    commands:
+      - kubectl apply -f k8s/api-deployment.yaml
+      - kubectl apply -f k8s/api-service.yaml
+
+trigger:
+  event:
+    - push
+    - pull_request
+  branch:
+    include:
+      - main
+      - develop
