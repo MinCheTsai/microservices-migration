@@ -74,16 +74,16 @@ resource "google_secret_manager_secret" "db_credentials" {
   }
 }
 
-# resource "google_secret_manager_secret_version" "db_credentials_version" {
-#   secret      = google_secret_manager_secret.db_credentials.id
-#   secret_data = jsonencode({
-#     username = google_sql_user.default.name
-#     password = google_sql_user.default.password
-#     host     = google_sql_database_instance.postgres.connection_name
-#     port     = 5432
-#     database = google_sql_database.default.name
-#   })
-# }
+resource "google_secret_manager_secret_version" "db_credentials_version" {
+  secret      = google_secret_manager_secret.db_credentials.id
+  secret_data = jsonencode({
+    username = google_sql_user.default.name
+    password = google_sql_user.default.password
+    host     = google_sql_database_instance.postgres.connection_name
+    port     = 5432
+    database = google_sql_database.default.name
+  })
+}
 
 output "kubeconfig" {
   value = google_container_cluster.primary.endpoint
